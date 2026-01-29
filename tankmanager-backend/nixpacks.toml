@@ -6,7 +6,8 @@ nixPkgs = ["nodejs-20_x", "openssl"]
 
 [phases.install]
 cmds = [
-  "npm ci --include=dev",
+  "npm ci --omit=dev --ignore-scripts",
+  "npm install --save-dev @nestjs/cli typescript @types/node",
   "npx prisma generate"
 ]
 
@@ -14,4 +15,4 @@ cmds = [
 cmds = ["npm run build"]
 
 [start]
-cmd = "npx prisma migrate deploy && npm run start:prod"
+cmd = "npx prisma migrate deploy && node dist/main"
