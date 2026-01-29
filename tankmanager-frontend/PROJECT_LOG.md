@@ -2575,3 +2575,220 @@ openssl rand -base64 48
 ```
 
 ---
+
+## 29.01.2026 - 17:00 - ✅ PRODUCTION DEPLOYMENT & Admin User Management (ABGESCHLOSSEN)
+
+### 🚀 Deployment erfolgreich abgeschlossen
+
+**Production URLs:**
+- **Backend:** https://tankmanager-production.up.railway.app (Railway)
+- **Frontend:** https://tankmanager-ebon.vercel.app (Vercel)
+- **Status:** ✅ LIVE und vollständig funktional
+
+**Deployment-Plattformen:**
+- Railway: Backend (NestJS + PostgreSQL) in us-west1
+- Vercel: Frontend (Next.js) mit Auto-Deploy von GitHub main branch
+
+### 📋 Implementierte Features: Admin User Management
+
+**Neue Seite: `/app/admin/users/page.tsx`**
+
+Vollständige Benutzerverwaltung für Admins mit folgenden Features:
+
+1. **Benutzer-Liste anzeigen**
+   - Tabellarische Ansicht aller Firmen-Benutzer
+   - Anzeige: Name, Email, Rollen, Status, Erstellungsdatum
+   - Eigener User wird markiert mit "(Sie)"
+
+2. **Rollen bearbeiten**
+   - Inline-Bearbeitung mit Checkboxen
+   - Mehrfach-Rollen pro User möglich
+   - Rollen: USER, MECHANIC, MANAGEMENT, ADMIN
+   - Farbcodierte Rolle-Chips
+
+3. **Benutzer aktivieren/deaktivieren**
+   - Toggle-Button für Active/Inactive Status
+   - Grüner Badge "Aktiv" / Roter Badge "Inaktiv"
+   - Bestätigung vor Statusänderung
+
+4. **Passwort-Reset senden**
+   - "Passwort Reset" Button sendet Email-Link
+   - Backend erstellt Reset-Token
+
+5. **Benutzer löschen**
+   - "Löschen" Button (rot) für andere User
+   - Eigener User kann nicht gelöscht werden
+   - Bestätigung vor Löschung
+
+6. **Error Handling**
+   - Success/Error Alert-Messages mit Schließen-Button
+   - Netzwerkfehler-Behandlung
+
+**Design:**
+- Responsive Tabelle mit overflow-x scroll
+- Status-Badges und Rollen-Chips mit Farben
+- Button-Gruppen mit flexiblem Layout
+- Loading-State während API-Calls
+
+### 🐛 Behobene Deployment-Fehler
+
+#### 1. **Alert Component Props Fehler**
+**Problem:** TypeScript Build-Fehler - Alert erwartet `type` Prop, nicht `variant`
+```
+Type error: Property 'variant' does not exist on type 'AlertProps'
+```
+
+**Fix:**
+- Geändert: `variant="error"` → `type="error"`
+- Geändert: `variant="success"` → `type="success"`
+- Commit: `19291af` "fix: Change Alert variant to type prop"
+
+#### 2. **User Roles Object-Struktur Fehler**
+**Problem:** React Error #31 - Versuch, komplexes Objekt als React Child zu rendern
+```
+Error: Objects are not valid as a React child (object with keys {id, userId, role, assignedAt, assignedBy})
+```
+
+**Root Cause:** Backend gibt `user.roles` als Array von Objekten zurück:
+```typescript
+roles: [
+  { id: "...", userId: "...", role: "ADMIN", assignedAt: "...", assignedBy: "..." }
+]
+```
+
+**Fix:**
+- `handleEditRoles()`: Extrahiere `role` Property: `currentRoles.map(r => r.role)`
+- Rollen-Anzeige: `user.roles.map((roleObj: any) => roleObj.role)`
+- Key geändert von `role` zu `roleObj.id` für Uniqueness
+- Commit: `68f7cbb` "fix: Extract role names from role objects"
+
+#### 3. **CORS PUT Method nicht erlaubt**
+**Problem:** CORS blockiert PUT-Requests für User-Updates
+```
+Method PUT is not allowed by Access-Control-Allow-Methods in preflight response
+```
+
+**Fix:** `src/main.ts` - CORS Methods erweitert:
+```typescript
+methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+// Vorher nur: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
+```
+- Commit: `d1ef794` "fix: Add PUT method to CORS allowed methods"
+
+#### 4. **isActive vs active Feld-Name Inkonsistenz**
+**Problem:** Frontend verwendet `isActive`, Backend sendet `active`
+```
+// Frontend erwartet:
+user.isActive ? 'Aktiv' : 'Inaktiv'
+
+// Backend sendet:
+{ active: true, ... }
+```
+
+**Symptom:** User wurde aktiviert (Success Message), aber Status-Badge blieb rot "Inaktiv"
+
+**Fix:** Alle `isActive` Referenzen zu `active` geändert:
+- Interface: `active: boolean` (statt `isActive`)
+- Status-Badge: `user.active ? '...' : '...'`
+- Toggle-Button: `handleToggleActive(user.id, user.active)`
+- API Body: `{ active: !currentActive }` (statt `isActive`)
+- Commit: `97713b2` "fix: Change all isActive references to active in users page"
+
+### 🔧 Deployment-Konfiguration Zusammenfassung
+
+**Railway Backend:**
+- Root Directory: `/tankmanager-backend` (in monorepo)
+- Build System: Nixpacks
+- Start Command: `prisma migrate deploy && node dist/main`
+- Auto-Deploy bei Git Push zu main
+- Environment Variables:
+  - `DATABASE_URL` (PostgreSQL internal URL)
+  - `FRONTEND_URL=https://tankmanager-ebon.vercel.app`
+  - `JWT_SECRET` (48-char secure string)
+  - Storage-Variables für File Uploads
+
+**Vercel Frontend:**
+- Root Directory: `/tankmanager-frontend` (in monorepo)
+- Framework: Next.js (Auto-detected)
+- Build Command: `npm run build`
+- Auto-Deploy bei Git Push zu main
+- Environment Variable:
+  - `NEXT_PUBLIC_API_BASE_URL=https://tankmanager-production.up.railway.app`
+
+**Database Migrations:**
+- 16 Prisma Migrations erfolgreich applied
+- Auto-Migration on deploy via `prisma migrate deploy`
+
+### ⚠️ Wichtige Hinweise für Production
+
+1. **Nur Production URL verwenden:**
+   - ✅ Funktioniert: `https://tankmanager-ebon.vercel.app`
+   - ❌ CORS-Fehler: Vercel Preview URLs (z.B. `tankmanager-xyz-moosmuehle.vercel.app`)
+   - Backend CORS erlaubt nur die konfigurierte FRONTEND_URL
+
+2. **Hard Refresh nach Deployment:**
+   - Nach Vercel Deployment: `Ctrl + Shift + R` für Cache-Clear
+   - Wichtig bei JS/CSS Änderungen
+
+3. **Deployment Status prüfen:**
+   - Railway: "Active" Status im Deployments Tab
+   - Vercel: "Ready" Status (nicht "Building" oder "Error")
+   - Bei Fehler: Commit-Hash prüfen (muss neuester sein)
+
+### 📂 Geänderte/Neue Dateien
+
+**Frontend:**
+- ✅ `app/admin/users/page.tsx` (NEU) - 333 Zeilen User Management
+- ✅ `lib/api.ts` - Zentralisierte API_BASE_URL für alle Komponenten
+- ✅ 13 Dateien - Alle hardcoded localhost:3005 URLs ersetzt mit API_BASE_URL
+
+**Backend:**
+- ✅ `src/main.ts` - CORS mit PUT Method und FRONTEND_URL
+- ✅ `package.json` - Auto-Migration Scripts (postinstall, start)
+
+### 🎯 Testing & Validation
+
+**Getestet und bestätigt funktionierende Features:**
+1. ✅ User Registration - "Moosmuehle" Company erstellt
+2. ✅ User Login mit JWT Token
+3. ✅ Machine Creation - AR-38-001 mit Serial aöldsfjküpioqg
+4. ✅ File Upload - WhatsApp Image erfolgreich hochgeladen
+5. ✅ Admin Dashboard - Alle Links funktional
+6. ✅ User Management:
+   - Liste aller Users anzeigen ✅
+   - Benutzer aktivieren/deaktivieren ✅
+   - Rollen bearbeiten ✅
+   - Passwort-Reset senden ✅
+   - User löschen ✅
+
+### 📊 Git Commits (Deployment Session)
+
+```bash
+f957622 - feat: Add admin users management page
+19291af - fix: Change Alert variant to type prop
+68f7cbb - fix: Extract role names from role objects
+d1ef794 - fix: Add PUT method to CORS allowed methods (Backend)
+0e11c20 - fix: Use correct field name 'active' instead of 'isActive'
+97713b2 - fix: Change all isActive references to active in users page
+```
+
+### ✅ Production Status: READY FOR BUSINESS
+
+**Die App ist jetzt vollständig produktionsbereit mit:**
+- ✅ Stabiles Backend auf Railway (Auto-Scaling)
+- ✅ Performantes Frontend auf Vercel CDN
+- ✅ Vollständige User Management für Admins
+- ✅ Multi-Tenancy mit Daten-Isolation
+- ✅ Sichere Authentifizierung (JWT)
+- ✅ Auto-Deployments bei Git Push
+- ✅ Database Migrations automatisiert
+- ✅ File Uploads funktional
+- ✅ Alle CRUD-Operationen getestet
+
+**Nächste geplante Features:**
+- Einladungssystem weiter ausbauen
+- Weitere Admin-Funktionen
+- Reports & Analytics
+- UVV-Prüfungen Module
+
+---
