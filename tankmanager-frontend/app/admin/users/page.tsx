@@ -109,7 +109,7 @@ export default function UsersPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${getToken()}`,
         },
-        body: JSON.stringify({ isActive: !currentActive }),
+        body: JSON.stringify({ active: !currentActive }),
       });
 
       if (response.ok) {
