@@ -1,18 +1,23 @@
-# Nixpacks Configuration for Railway
-providers = ["node"]
+﻿# Nixpacks plan for TankManager Backend (Monorepo)
+
+[variables]
+NIXPACKS_NODE_VERSION = "20"
 
 [phases.setup]
-nixPkgs = ["nodejs-20_x", "openssl"]
+nixPkgs = ["nodejs", "openssl"]
 
 [phases.install]
 cmds = [
-  "npm ci --omit=dev --ignore-scripts",
-  "npm install --save-dev @nestjs/cli typescript @types/node",
-  "npx prisma generate"
+  "cd tankmanager-backend",
+  "npm ci"
 ]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = [
+  "cd tankmanager-backend",
+  "npx prisma generate",
+  "npm run build"
+]
 
 [start]
-cmd = "npx prisma migrate deploy && node dist/main"
+cmd = "cd tankmanager-backend && npx prisma migrate deploy && node dist/main"
