@@ -1,7 +1,7 @@
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if (!baseUrl) {
-  throw new Error('NEXT_PUBLIC_API_BASE_URL is missing. Set it in .env.local');
+  throw new Error('NEXT_PUBLIC_API_BASE_URL is missing. Set it in .env.local or Vercel environment variables');
 }
 
 // Bessere Error-Klasse mit strukturierten Daten
