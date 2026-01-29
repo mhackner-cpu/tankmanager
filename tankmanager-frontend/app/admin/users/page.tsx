@@ -199,8 +199,8 @@ export default function UsersPage() {
         <p style={{ color: '#666' }}>Alle Benutzer Ihres Unternehmens</p>
       </div>
 
-      {error && <Alert variant="error" message={error} onClose={() => setError('')} />}
-      {success && <Alert variant="success" message={success} onClose={() => setSuccess('')} />}
+      {error && <Alert type="error" message={error} onClose={() => setError('')} />}
+      {success && <Alert type="success" message={success} onClose={() => setSuccess('')} />}
 
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: 8, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
