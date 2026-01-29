@@ -66,9 +66,9 @@ export default function UsersPage() {
     }
   };
 
-  const handleEditRoles = (userId: string, currentRoles: string[]) => {
+  const handleEditRoles = (userId: string, currentRoles: any[]) => {
     setEditingUserId(userId);
-    setEditingRoles(currentRoles);
+    setEditingRoles(currentRoles.map(r => r.role));
     setError('');
     setSuccess('');
   };
@@ -243,19 +243,19 @@ export default function UsersPage() {
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {user.roles.map(role => (
+                      {user.roles.map((roleObj: any) => (
                         <span
-                          key={role}
+                          key={roleObj.id}
                           style={{
                             padding: '4px 8px',
-                            backgroundColor: role === 'ADMIN' ? '#fee' : role === 'MANAGEMENT' ? '#fef3c7' : '#e0f2fe',
-                            color: role === 'ADMIN' ? '#991b1b' : role === 'MANAGEMENT' ? '#78350f' : '#075985',
+                            backgroundColor: roleObj.role === 'ADMIN' ? '#fee' : roleObj.role === 'MANAGEMENT' ? '#fef3c7' : '#e0f2fe',
+                            color: roleObj.role === 'ADMIN' ? '#991b1b' : roleObj.role === 'MANAGEMENT' ? '#78350f' : '#075985',
                             borderRadius: 4,
                             fontSize: 12,
                             fontWeight: 500,
                           }}
                         >
-                          {role}
+                          {roleObj.role}
                         </span>
                       ))}
                     </div>
