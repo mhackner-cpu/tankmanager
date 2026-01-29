@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import MachineForm from '@/components/MachineForm';
 
-export default function NewMachinePage() {
+function NewMachineContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get('categoryId');
@@ -18,6 +19,14 @@ export default function NewMachinePage() {
         <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>Neue Maschine / Gerät</h1>
         <MachineForm onSuccess={handleSuccess} initialCategoryId={categoryId || undefined} />
     </main>
+  );
+}
+
+export default function NewMachinePage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 16 }}>Lädt...</div>}>
+      <NewMachineContent />
+    </Suspense>
   );
 }
 
