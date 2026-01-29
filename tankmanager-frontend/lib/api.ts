@@ -5,6 +5,9 @@ if (!baseUrl) {
   throw new Error('NEXT_PUBLIC_API_BASE_URL is missing. Set it in .env.local or Vercel environment variables');
 }
 
+// Export for direct usage in components
+export const API_BASE_URL = baseUrl;
+
 // Bessere Error-Klasse mit strukturierten Daten
 export class ApiError extends Error {
   constructor(

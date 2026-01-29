@@ -6,6 +6,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { getToken, getUser, isAuthenticated } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function PasswordPage() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function PasswordPage() {
       const user = getUser();
       if (!user) return;
 
-      const response = await fetch(`http://localhost:3005/users/${user.id}/change-password`, {
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

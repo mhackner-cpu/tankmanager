@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, API_BASE_URL } from '@/lib/api';
 
 interface FileUploadProps {
   machineId: string;
@@ -67,7 +67,7 @@ export default function FileUpload({ machineId, onUploadSuccess }: FileUploadPro
         setProgress((prev) => Math.min(prev + 10, 90));
       }, 200);
 
-      const response = await fetch('http://localhost:3005/files/upload', {
+      const response = await fetch(`${API_BASE_URL}/files/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('tankmanager_token')}`,

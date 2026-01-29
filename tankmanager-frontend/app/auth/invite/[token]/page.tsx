@@ -7,6 +7,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { saveAuth } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function InviteAcceptPage() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function InviteAcceptPage() {
   useEffect(() => {
     if (!token) return;
 
-    fetch(`http://localhost:3005/auth/invite/${token}`)
+    fetch(`${API_BASE_URL}/auth/invite/${token}`)
       .then(res => res.json())
       .then(data => {
         if (data.message || data.error) {
@@ -66,7 +67,7 @@ export default function InviteAcceptPage() {
     setSubmitting(true);
 
     try {
-      const response = await fetch(`http://localhost:3005/auth/invite/${token}/accept`, {
+      const response = await fetch(`${API_BASE_URL}/auth/invite/${token}/accept`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -9,7 +9,7 @@ Tech-Stack: Next.js Frontend (Port 3000) + NestJS Backend (Port 3005) mit Prisma
 - Zentrale Plattform auf eigener Domain (z.B. app.deine-firma.de)
 - Zukünftig: Lizenzverkauf an fremde Unternehmen (Subscription-Modell)
 
-## 🧱 Aktueller Stand (29.01.2026, 08:40)
+## 🧱 Aktueller Stand (29.01.2026, 14:30)
 
 ### ⚠️ WICHTIG: Kategorieverwaltung - Eine Seite!
 **Haupt-Kategorieverwaltung ist in `/app/machines/manage/page.tsx`**
@@ -2486,5 +2486,92 @@ export const CurrentUser = createParamDecorator(
 
 **Wichtig für komplexe Module:**  
 Je komplexer die Logik, desto wichtiger wird diese Robustheit-Infrastruktur. Beim Tankverwaltungs-Modul mit Statistiken, Charts und komplexen Berechnungen wird die Type-Safety verhindern, dass kleine Änderungen große Bugs verursachen.
+
+---
+
+## 🚀 Railway Deployment vorbereitet (29.01.2026, 14:30)
+
+### ✅ Railway-Konfiguration erstellt
+
+**Dateien hinzugefügt:**
+1. **railway.json** - Railway Build & Deploy Configuration
+   - Build Command: `npm install && npx prisma generate && npm run build`
+   - Start Command: `npx prisma migrate deploy && npm run start:prod`
+   - Restart Policy konfiguriert
+
+2. **nixpacks.toml** - Nixpacks Build Configuration
+   - Node.js 20.x als Provider
+   - OpenSSL für Prisma
+   - Automatische Prisma Client-Generierung
+   - Build & Start Commands definiert
+
+3. **Dockerfile** - Container-Build (Optional)
+   - Node 20 Alpine Image
+   - Multi-Stage Build für kleinere Image-Größe
+   - Production-optimiert
+
+4. **RAILWAY_DEPLOYMENT.md** - Schritt-für-Schritt Anleitung
+   - GitHub Repository Setup
+   - Railway Projekt erstellen
+   - PostgreSQL hinzufügen
+   - Environment Variables konfigurieren
+   - Troubleshooting Guide
+   - Kosten-Übersicht
+
+5. **.env.example** - Environment Variables Template
+   - Alle benötigten Variablen dokumentiert
+   - JWT_SECRET, DATABASE_URL, FRONTEND_URL, etc.
+
+6. **.railwayignore** - Deployment Ignore File
+   - node_modules, .env, logs werden ausgeschlossen
+
+**Git Commit:**
+```bash
+✅ Commit: "feat: Add Railway deployment configuration"
+✅ 6 Dateien hinzugefügt/geändert
+✅ Gepusht zu GitHub (main branch)
+```
+
+### 📋 Nächste Schritte für Deployment:
+
+**Backend auf Railway (15-30 Min):**
+1. ✅ Railway-Konfiguration erstellt
+2. ⏳ Railway Account erstellen (railway.app)
+3. ⏳ "Deploy from GitHub repo" wählen
+4. ⏳ tankmanager-backend Repository verbinden
+5. ⏳ PostgreSQL-Service hinzufügen
+6. ⏳ Environment Variables setzen:
+   - `JWT_SECRET` (min. 32 Zeichen, sicher generieren!)
+   - `FRONTEND_URL` (später)
+   - `DATABASE_URL` (automatisch von PostgreSQL)
+7. ⏳ Railway deployed automatisch!
+
+**Frontend auf Vercel (10-15 Min):**
+1. ⏳ Vercel Account erstellen
+2. ⏳ tankmanager-frontend Repository importieren
+3. ⏳ Environment Variable setzen:
+   - `NEXT_PUBLIC_API_URL` (Railway Backend-URL)
+4. ⏳ Deploy!
+
+**Gesamt-Zeit: 30-60 Minuten bis Go-Live! 🚀**
+
+### 🔐 JWT Secret generieren
+
+Für Production brauchst du ein sicheres JWT Secret (min. 32 Zeichen):
+
+**Option 1: PowerShell**
+```powershell
+# In PowerShell ausführen:
+-join ((48..57) + (65..90) + (97..122) | Get-Random -Count 48 | ForEach-Object {[char]$_})
+```
+
+**Option 2: Online Generator**
+- https://generate-secret.vercel.app/32
+- https://randomkeygen.com/
+
+**Option 3: OpenSSL (WSL/Git Bash)**
+```bash
+openssl rand -base64 48
+```
 
 ---

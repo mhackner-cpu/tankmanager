@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, API_BASE_URL } from '@/lib/api';
 
 interface FileItem {
   id: string;
@@ -51,7 +51,7 @@ export default function FileList({ machineId, refreshTrigger }: FileListProps) {
 
   const handleDownload = async (fileId: string, fileName: string) => {
     try {
-      const response = await fetch(`http://localhost:3005/files/${fileId}/download`, {
+      const response = await fetch(`${API_BASE_URL}/files/${fileId}/download`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('tankmanager_token')}`,
         },

@@ -6,6 +6,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { getToken, getUser, isAuthenticated, saveAuth } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function ProfilePage() {
       const user = getUser();
       if (!user) return;
 
-      const response = await fetch(`http://localhost:3005/users/${user.id}`, {
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Alert from '@/components/Alert';
 import { getToken, isAdmin, isAuthenticated } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 interface Invitation {
   id: string;
@@ -61,7 +62,7 @@ export default function InvitationsPage() {
 
   const loadInvitations = async () => {
     try {
-      const response = await fetch('http://localhost:3005/invitations', {
+      const response = await fetch(`${API_BASE_URL}/invitations`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -98,7 +99,7 @@ export default function InvitationsPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:3005/invitations', {
+      const response = await fetch(`${API_BASE_URL}/invitations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +128,7 @@ export default function InvitationsPage() {
     if (!confirm('Einladung widerrufen?')) return;
 
     try {
-      const response = await fetch(`http://localhost:3005/invitations/${invitationId}`, {
+      const response = await fetch(`${API_BASE_URL}/invitations/${invitationId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -145,7 +146,7 @@ export default function InvitationsPage() {
 
   const handleResend = async (invitationId: string) => {
     try {
-      const response = await fetch(`http://localhost:3005/invitations/${invitationId}/resend`, {
+      const response = await fetch(`${API_BASE_URL}/invitations/${invitationId}/resend`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${getToken()}`,

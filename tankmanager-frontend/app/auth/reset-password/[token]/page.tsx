@@ -7,6 +7,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { saveAuth } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function ResetPasswordPage({ params }: { params: { token: string } }) {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
 
   const verifyToken = async () => {
     try {
-      const response = await fetch(`http://localhost:3005/auth/reset-password/${params.token}`);
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password/${params.token}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -61,7 +62,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:3005/auth/reset-password/${params.token}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password/${params.token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: formData.password }),

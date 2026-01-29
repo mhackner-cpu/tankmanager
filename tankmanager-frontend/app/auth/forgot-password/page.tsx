@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3005/auth/forgot-password', {
+      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

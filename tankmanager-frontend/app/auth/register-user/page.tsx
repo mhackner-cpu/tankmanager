@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import Select from '@/components/Select';
 import { saveAuth } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 interface Company {
   id: string;
@@ -37,7 +38,7 @@ export default function RegisterUserPage() {
 
   const fetchCompanies = async () => {
     try {
-      const response = await fetch('http://localhost:3005/companies');
+      const response = await fetch(`${API_BASE_URL}/companies`);
       if (response.ok) {
         const data = await response.json();
         setCompanies(data);
@@ -82,7 +83,7 @@ export default function RegisterUserPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3005/auth/register-user', {
+      const response = await fetch(`${API_BASE_URL}/auth/register-user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
