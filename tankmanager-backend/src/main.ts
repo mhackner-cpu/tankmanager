@@ -3,10 +3,21 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  // Get allowed origins from environment variable
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const allowedOrigins = [frontendUrl];
+  
+  // In development, also allow localhost
+  if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.push('http://localhost:3000');
+  }
+  
   app.enableCors({
-    origin: ['http://localhost:3000'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   const port = parseInt(process.env.PORT || '3005', 10);
