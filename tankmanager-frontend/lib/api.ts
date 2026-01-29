@@ -1,4 +1,5 @@
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+// Temporary hardcoded for deployment testing
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://tankmanager-production.up.railway.app';
 
 if (!baseUrl) {
   throw new Error('NEXT_PUBLIC_API_BASE_URL is missing. Set it in .env.local or Vercel environment variables');
