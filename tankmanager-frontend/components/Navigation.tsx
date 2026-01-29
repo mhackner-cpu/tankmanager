@@ -135,7 +135,6 @@ export default function Navigation() {
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               style={{
-                display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 width: "48px",
@@ -633,6 +632,42 @@ export default function Navigation() {
           </Link>
         )}
       </div>
+
+      {/* CSS for Media Queries */}
+      <style jsx>{`
+        /* Mobile-First: Show hamburger, hide desktop elements */
+        .mobile-menu-button {
+          display: flex !important;
+        }
+        
+        .desktop-nav,
+        .desktop-user {
+          display: none !important;
+        }
+        
+        .mobile-menu {
+          display: flex !important;
+        }
+        
+        /* Desktop: Show desktop elements, hide mobile hamburger and menu */
+        @media (min-width: 769px) {
+          .desktop-nav {
+            display: flex !important;
+          }
+          
+          .desktop-user {
+            display: block !important;
+          }
+          
+          .mobile-menu-button {
+            display: none !important;
+          }
+          
+          .mobile-menu {
+            display: none !important;
+          }
+        }
+      `}</style>
     </nav>
   );
 }
