@@ -1,0 +1,38 @@
+# Railway Ignore File
+# Dateien die nicht hochgeladen werden sollen
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Development
+node_modules/
+*.log
+npm-debug.log*
+
+# Build
+dist/
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup
+backup/
+*.sql
+*.backup
+
+# Uploads (falls lokal)
+uploads/*
+!uploads/.gitkeep
