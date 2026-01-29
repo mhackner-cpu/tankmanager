@@ -1,0 +1,28 @@
+﻿# Whitelist approach - ignore everything except tankmanager projects
+/*
+!/.gitignore
+!/tankmanager-frontend/
+!/tankmanager-backend/
+!/DEPLOYMENT_CHECKLIST.md
+!/DEPLOYMENT_GUIDE.md
+!/railway.json
+!/vercel.json
+!/.env.production.example
+
+# Inside tankmanager-backend
+tankmanager-backend/node_modules/
+tankmanager-backend/dist/
+tankmanager-backend/.env
+tankmanager-backend/.env.local
+tankmanager-backend/.env.production
+tankmanager-backend/uploads/
+tankmanager-backend/*.log
+
+# Inside tankmanager-frontend
+tankmanager-frontend/node_modules/
+tankmanager-frontend/.next/
+tankmanager-frontend/out/
+tankmanager-frontend/.env
+tankmanager-frontend/.env.local
+tankmanager-frontend/.env.production
+tankmanager-frontend/*.log

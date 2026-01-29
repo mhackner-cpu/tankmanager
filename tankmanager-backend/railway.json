@@ -1,0 +1,24 @@
+# Railway Deployment Configuration
+
+## Benötigte Services
+- Web Service (Backend)
+- PostgreSQL Database
+
+## Deployment Settings
+
+### Build Command
+```
+npm install && npx prisma generate && npm run build
+```
+
+### Start Command
+```
+npx prisma migrate deploy && npm run start:prod
+```
+
+### Environment Variables
+Siehe DEPLOYMENT_GUIDE.md
+
+## Wichtig
+- Node Version: 20.x
+- Port: 3005 (automatisch von Railway erkannt via $PORT)
