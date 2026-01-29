@@ -14,7 +14,7 @@ interface User {
   firstName: string;
   lastName: string;
   roles: string[];
-  isActive: boolean;
+  active: boolean;
   createdAt: string;
   company: {
     id: string;
@@ -265,14 +265,14 @@ export default function UsersPage() {
                   <span
                     style={{
                       padding: '4px 12px',
-                      backgroundColor: user.isActive ? '#d1fae5' : '#fee2e2',
-                      color: user.isActive ? '#065f46' : '#991b1b',
+                      backgroundColor: user.active ? '#d1fae5' : '#fee2e2',
+                      color: user.active ? '#065f46' : '#991b1b',
                       borderRadius: 12,
                       fontSize: 12,
                       fontWeight: 500,
                     }}
                   >
-                    {user.isActive ? 'Aktiv' : 'Inaktiv'}
+                    {user.active ? 'Aktiv' : 'Inaktiv'}
                   </span>
                 </td>
                 <td style={{ padding: 12, fontSize: 14, color: '#666' }}>
@@ -292,9 +292,9 @@ export default function UsersPage() {
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => handleToggleActive(user.id, user.isActive)}
+                          onClick={() => handleToggleActive(user.id, user.active)}
                         >
-                          {user.isActive ? 'Deaktivieren' : 'Aktivieren'}
+                          {user.active ? 'Deaktivieren' : 'Aktivieren'}
                         </Button>
                         <Button
                           size="sm"
