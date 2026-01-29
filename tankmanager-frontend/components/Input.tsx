@@ -20,14 +20,14 @@ export default function Input({
   const inputId = id || generatedId;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       {label && (
         <label
           htmlFor={inputId}
           style={{
-            fontSize: "13px",
+            fontSize: "16px", // Mobile-First: Mindestens 16px
             fontWeight: 600,
-            color: colors.neutral[700],
+            color: colors.neutral[800], // Besserer Kontrast
           }}
         >
           {label}
@@ -37,16 +37,18 @@ export default function Input({
         <textarea
           id={inputId}
           style={{
-            padding: "10px 12px",
-            fontSize: "14px",
+            padding: "14px 16px", // Touch-optimiert
+            fontSize: "16px", // Mobile-First: Verhindert Auto-Zoom
             border: `1px solid ${error ? colors.error : colors.neutral[300]}`,
-            borderRadius: "6px",
+            borderRadius: "8px",
             fontFamily: "inherit",
             transition: "all 0.2s ease",
             backgroundColor: colors.white,
             color: colors.neutral[900],
-            minHeight: "80px",
+            minHeight: "96px", // Touch-optimiert
             resize: "vertical",
+            width: "100%", // Mobile-First
+            boxSizing: "border-box",
           }}
           {...(props as any)}
         />
@@ -54,23 +56,26 @@ export default function Input({
         <input
           id={inputId}
           style={{
-            padding: "10px 12px",
-            fontSize: "14px",
+            padding: "14px 16px", // Touch-optimiert
+            fontSize: "16px", // Mobile-First: Verhindert Auto-Zoom auf iOS
             border: `1px solid ${error ? colors.error : colors.neutral[300]}`,
-            borderRadius: "6px",
+            borderRadius: "8px",
             fontFamily: "inherit",
             transition: "all 0.2s ease",
             backgroundColor: colors.white,
             color: colors.neutral[900],
+            minHeight: "48px", // Touch-optimiert
+            width: "100%", // Mobile-First
+            boxSizing: "border-box",
           }}
           {...props}
         />
       )}
       {error && (
-        <span style={{ fontSize: "12px", color: colors.error }}>{error}</span>
+        <span style={{ fontSize: "14px", color: colors.error, lineHeight: 1.4 }}>{error}</span>
       )}
       {hint && (
-        <span style={{ fontSize: "12px", color: colors.neutral[500] }}>
+        <span style={{ fontSize: "14px", color: colors.neutral[600], lineHeight: 1.4 }}>
           {hint}
         </span>
       )}

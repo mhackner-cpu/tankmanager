@@ -20,23 +20,24 @@ export default function Alert({ type, title, message, onClose }: AlertProps) {
   return (
     <div
       style={{
-        padding: "12px 16px",
+        padding: "16px", // Touch-optimiert
         border: `2px solid ${border}`,
-        borderRadius: "6px",
+        borderRadius: "8px",
         backgroundColor: bg,
-        marginBottom: "12px",
+        marginBottom: "16px", // Mobile spacing
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-start",
+        gap: "12px",
       }}
     >
-      <div>
+      <div style={{ flex: 1 }}>
         {title && (
-          <strong style={{ color: text, display: "block", marginBottom: "4px" }}>
+          <strong style={{ color: text, display: "block", marginBottom: "6px", fontSize: "16px", lineHeight: 1.4 }}>
             {title}
           </strong>
         )}
-        <p style={{ color: text, margin: 0, fontSize: "14px" }}>
+        <p style={{ color: text, margin: 0, fontSize: "16px", lineHeight: 1.5 }}>
           {message}
         </p>
       </div>
@@ -48,9 +49,15 @@ export default function Alert({ type, title, message, onClose }: AlertProps) {
             border: "none",
             color: text,
             cursor: "pointer",
-            fontSize: "18px",
-            padding: "0 8px",
+            fontSize: "24px", // Touch-optimiert
+            padding: "8px", // Touch-optimiert
+            minWidth: "40px", // Touch-optimiert
+            minHeight: "40px", // Touch-optimiert
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
+          aria-label="Schließen"
         >
           ✕
         </button>

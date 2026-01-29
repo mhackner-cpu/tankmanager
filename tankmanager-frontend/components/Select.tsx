@@ -20,14 +20,14 @@ export default function Select({
   const selectId = id || generatedId;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       {label && (
         <label
           htmlFor={selectId}
           style={{
-            fontSize: "13px",
+            fontSize: "16px", // Mobile-First
             fontWeight: 600,
-            color: colors.neutral[700],
+            color: colors.neutral[800], // Besserer Kontrast
           }}
         >
           {label}
@@ -36,15 +36,18 @@ export default function Select({
       <select
         id={selectId}
         style={{
-          padding: "10px 12px",
-          fontSize: "14px",
+          padding: "14px 16px", // Touch-optimiert
+          fontSize: "16px", // Mobile-First
           border: `1px solid ${error ? colors.error : colors.neutral[300]}`,
-          borderRadius: "6px",
+          borderRadius: "8px",
           fontFamily: "inherit",
           backgroundColor: colors.white,
           color: colors.neutral[900],
           cursor: "pointer",
           transition: "all 0.2s ease",
+          minHeight: "48px", // Touch-optimiert
+          width: "100%", // Mobile-First
+          boxSizing: "border-box",
         }}
         {...props}
       >
@@ -60,7 +63,7 @@ export default function Select({
         ))}
       </select>
       {error && (
-        <span style={{ fontSize: "12px", color: colors.error }}>{error}</span>
+        <span style={{ fontSize: "14px", color: colors.error, lineHeight: 1.4 }}>{error}</span>
       )}
     </div>
   );

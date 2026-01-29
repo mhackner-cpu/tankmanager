@@ -20,19 +20,21 @@ export default function Button({
     fontFamily: "system-ui, sans-serif",
     fontWeight: 500,
     border: "none",
-    borderRadius: "6px",
+    borderRadius: "8px",
     cursor: disabled || loading ? "not-allowed" : "pointer",
     transition: "all 0.2s ease",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: "8px",
+    width: "100%", // Mobile-First: Full width
+    minHeight: "48px", // Touch-optimiert
   };
 
   const sizeStyles = {
-    sm: { padding: "6px 12px", fontSize: "13px" },
-    md: { padding: "10px 16px", fontSize: "14px" },
-    lg: { padding: "12px 20px", fontSize: "16px" },
+    sm: { padding: "12px 16px", fontSize: "16px", minHeight: "48px" }, // Touch-optimiert
+    md: { padding: "14px 16px", fontSize: "16px", minHeight: "48px" }, // Touch-optimiert
+    lg: { padding: "16px 20px", fontSize: "18px", minHeight: "52px" }, // Touch-optimiert
   };
 
   const variantStyles: Record<string, React.CSSProperties> = {
