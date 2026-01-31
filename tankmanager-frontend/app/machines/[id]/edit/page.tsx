@@ -31,21 +31,51 @@ export default function EditMachinePage() {
 
   return (
     <main style={{ padding: 16, fontFamily: "system-ui, sans-serif" }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Maschine / Gerät bearbeiten</h1>
-          <Button 
-            onClick={handleDelete} 
-            variant="ghost" 
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+          flexWrap: 'wrap',
+          gap: 12,
+        }}
+      >
+        <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0, flex: 1 }}>Maschine / Gerät bearbeiten</h1>
+        <div style={{ minWidth: 0, flexShrink: 0, width: '100%', maxWidth: 180 }}>
+          <Button
+            onClick={handleDelete}
+            variant="ghost"
             disabled={deleting}
-            style={{ color: colors.red[600], borderColor: colors.red[600] }}
+            size="sm"
+            style={{
+              color: colors.red[600],
+              borderColor: colors.red[600],
+              width: '100%',
+              maxWidth: 180,
+            }}
           >
             {deleting ? 'Wird gelöscht...' : 'Löschen'}
           </Button>
         </div>
-        <MachineForm 
-          machineId={machineId} 
-          onSuccess={(categoryId) => router.push(`/machines/category/${categoryId}`)} 
-        />
+      </div>
+      <MachineForm
+        machineId={machineId}
+        onSuccess={(categoryId) => router.push(`/machines/category/${categoryId}`)}
+      />
+      <style jsx>{`
+        @media (min-width: 600px) {
+          div[style*='flex'] > div {
+            width: 180px !important;
+          }
+        }
+        @media (max-width: 599px) {
+          div[style*='flex'] > div {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
