@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { apiGet } from '@/lib/api';
 import { isAuthenticated } from '@/lib/auth';
 import colors from '@/lib/colors';
@@ -373,7 +374,24 @@ export default function MachinesOverviewPage() {
                         }}
                       >
                         <td style={{ padding: '12px 16px' }}>
-                          <span style={{ fontWeight: 500, fontFamily: 'monospace' }}>{machine.inventoryNo}</span>
+                          <Link 
+                            href={`/machines/${machine.id}`}
+                            style={{ 
+                              fontWeight: 500, 
+                              fontFamily: 'monospace',
+                              color: colors.primary,
+                              textDecoration: 'none',
+                              cursor: 'pointer'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.textDecoration = 'underline';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.textDecoration = 'none';
+                            }}
+                          >
+                            {machine.inventoryNo}
+                          </Link>
                         </td>
                         <td style={{ padding: '12px 16px' }}>{machine.designation}</td>
                         <td style={{ padding: '12px 16px', color: colors.neutral[600] }}>
@@ -387,14 +405,6 @@ export default function MachinesOverviewPage() {
                         </td>
                         <td style={{ padding: '12px 16px', color: colors.neutral[600] }}>
                           {machine.owner?.name || '-'}
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <Button
-                            onClick={() => router.push(`/machines/${machine.id}`)}
-                            style={{ fontSize: '13px', padding: '6px 12px' }}
-                          >
-                            Ansehen
-                          </Button>
                         </td>
                       </tr>
                     );
