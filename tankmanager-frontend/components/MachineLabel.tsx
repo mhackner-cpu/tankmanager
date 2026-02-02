@@ -14,9 +14,8 @@ interface MachineLabelProps {
 }
 
 export default function MachineLabel({ inventoryNo, designation, category, owner, machineId, size = 'small' }: MachineLabelProps) {
-  // TODO: Später durch echte Domain ersetzen wenn auf Website veröffentlicht
-  // const baseUrl = 'https://your-domain.com';
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+  // Produktions-URL für QR-Code (immer die veröffentlichte Domain verwenden)
+  const baseUrl = 'https://tankmanager-frontend.vercel.app';
   const machineUrl = `${baseUrl}/machines/${machineId}/details`;
 
   const handlePrint = () => {
