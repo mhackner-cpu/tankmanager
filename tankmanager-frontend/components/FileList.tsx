@@ -186,9 +186,10 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
-              <button
-                onClick={() => handleDownload(file.id, file.fileName)}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0, minWidth: 110 }}>
+              <a
+                href={file.url || `${API_BASE_URL}/files/${file.id}/download`}
+                download={file.fileName}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#10b981',
@@ -198,17 +199,15 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: '500',
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  display: 'block',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#059669';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#10b981';
-                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#059669')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#10b981')}
               >
                 ⬇️ Download
-              </button>
-
+              </a>
               <button
                 onClick={() => handleDelete(file.id)}
                 disabled={deleting === file.id}
@@ -221,17 +220,11 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
                   cursor: deleting === file.id ? 'not-allowed' : 'pointer',
                   fontSize: '14px',
                   fontWeight: '500',
+                  textAlign: 'center',
+                  display: 'block',
                 }}
-                onMouseEnter={(e) => {
-                  if (deleting !== file.id) {
-                    e.currentTarget.style.backgroundColor = '#dc2626';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (deleting !== file.id) {
-                    e.currentTarget.style.backgroundColor = '#ef4444';
-                  }
-                }}
+                onMouseEnter={e => { if (deleting !== file.id) e.currentTarget.style.backgroundColor = '#dc2626'; }}
+                onMouseLeave={e => { if (deleting !== file.id) e.currentTarget.style.backgroundColor = '#ef4444'; }}
               >
                 {deleting === file.id ? '...' : '🗑️ Löschen'}
               </button>
