@@ -1,22 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { apiRequest, API_BASE_URL } from '@/lib/api';
-
-interface FileItem {
-  id: string;
-  machineId: string;
-  module: string;
-  title: string | null;
-  fileName: string;
-  mimeType: string | null;
-  sizeBytes: number | null;
-  uploadedBy: string | null;
-  uploadedAt: string;
-}
-
-interface FileListProps {
-  machineId: string;
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {files.length === 0 ? (
+        <p style={{ color: '#888', fontSize: 14 }}>Keine Dateien vorhanden.</p>
+      ) : (
+        files.map((file) => (
+          <div key={file.id} style={{ background: '#fafafa', border: '1px solid #eee', borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ fontSize: 32 }}>{getFileIcon(file.name)}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 500, wordBreak: 'break-all' }}>{file.name}</div>
+                <div style={{ fontSize: 12, color: '#888' }}>{(file.size / 1024 / 1024).toFixed(1)} MB • {formatDate(file.createdAt)}</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <a href={file.url} download style={{ background: '#10b981', color: 'white', border: 'none', borderRadius: 6, padding: '6px 12px', fontWeight: 600, fontSize: 13, textDecoration: 'none', flex: 1, textAlign: 'center' }}>⬇️ Download</a>
+              <button onClick={() => handleDelete(file.id)} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: 6, padding: '6px 12px', fontWeight: 600, fontSize: 13, cursor: 'pointer', flex: 1 }}>🗑️ Löschen</button>
+            </div>
   refreshTrigger?: number;
 }
 

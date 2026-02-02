@@ -580,19 +580,10 @@ export default function MachineDetailPage() {
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: '12px' }}>
-      <span style={{ fontSize: '14px', color: colors.neutral[500] }}>{label}:</span>
-      <span 
-        style={{ 
-          fontSize: '14px', 
-          color: colors.neutral[900], 
-          fontWeight: 500,
-          wordBreak: 'break-word',
-          overflowWrap: 'break-word'
-        }}
-      >
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ fontSize: '14px', color: colors.neutral[500] }}>{label}:</div>
+      <div style={{ fontSize: '14px', color: colors.neutral[900], fontWeight: 500, wordBreak: 'break-word', overflowWrap: 'break-word', marginLeft: 16 }}>
         {value || '-'}
-      </span>
-    </div>
+      </div>
   );
 }
