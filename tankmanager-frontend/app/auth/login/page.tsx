@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
@@ -11,10 +11,9 @@ import { saveAuth } from '@/lib/auth';
 import { API_BASE_URL } from '@/lib/api';
 import colors from '@/lib/colors';
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect');
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,6 +22,14 @@ function LoginForm() {
     email: '',
     password: '',
   });
+
+  // Get redirect URL from query params on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setRedirectUrl(params.get('redirect'));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,21 +158,5 @@ function LoginForm() {
         </div>
       </form>
     </AuthLayout>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <AuthLayout 
-        title="Willkommen zurück" 
-        subtitle="Melden Sie sich bei Ihrem TankManager Account an"
-        icon="🚜"
-      >
-        <p>Lädt...</p>
-      </AuthLayout>
-    }>
-      <LoginForm />
-    </Suspense>
   );
 }
