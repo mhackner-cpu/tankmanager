@@ -39,8 +39,6 @@ export default function Navigation() {
 
   const navItems = [
     { label: "Maschinen", href: "/machines" },
-    { label: "Kategorien", href: "/categories" },
-    { label: "Eigentümer", href: "/owners" },
   ];
 
   // Close dropdown on outside click

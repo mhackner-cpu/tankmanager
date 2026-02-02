@@ -1,3 +1,28 @@
+### 2026-01-31: npm audit & Sicherheitslücke xlsx
+
+- Nach `npm audit fix --force` bleibt eine High Severity Vulnerability im Paket `xlsx` (sheetjs):
+  - Prototype Pollution & ReDoS laut npm advisory
+  - Kein Fix verfügbar, siehe https://github.com/SheetJS/sheetjs/issues
+- Paket wird aktuell benötigt und bleibt vorerst im Projekt.
+- Empfehlung: Regelmäßig auf Updates prüfen, Risiko beobachten, ggf. Alternativen evaluieren.
+
+---
+## 2026-01-31
+
+### Build-Fehler Navigation.tsx (Vercel/SSR)
+- **Problem:**
+  - Die letzten drei Deployments sind fehlgeschlagen, weil in `components/Navigation.tsx` nach dem Komponentenexport ein Syntaxfehler (nicht zugeordnete JSX-Fragmente) stand.
+  - Fehlermeldung: `Parsing ecmascript source code failed ... Expression expected ...` (siehe Build-Log)
+- **Ursache:**
+  - Nach dem eigentlichen Komponentenexport war ein fehlerhafter JSX-Block (vermutlich Copy-Paste-Fehler oder Merge-Fehler), der nicht zu einer Funktion oder einem Return gehörte.
+- **Lösung:**
+  - Den fehlerhaften Block am Dateiende entfernt.
+  - Datei validiert, keine weiteren Fehler.
+- **Nächste Schritte:**
+  - Erneutes Deployment anstoßen.
+  - Bei weiteren Build-Fehlern erneut Logs prüfen.
+
+---
 # Tankmanager – Arbeitsprotokoll
 
 ## 🧠 Projektziel
