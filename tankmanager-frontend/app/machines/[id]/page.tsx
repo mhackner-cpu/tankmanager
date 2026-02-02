@@ -166,12 +166,10 @@ export default function MachineDetailPage() {
         >
           ← Zurück zu {machine.category.name}
         </Button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-          <div>
+        <div className="machine-detail-header">
+          <div className="machine-detail-header-main">
+            <h1 className="machine-inventory-no">{machine.inventoryNo}</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <h1 style={{ fontSize: '28px', fontWeight: 700, margin: 0 }}>
-                {machine.inventoryNo}
-              </h1>
               {canChangeStatus ? (
                 <select
                   value={machine.status}
@@ -206,7 +204,7 @@ export default function MachineDetailPage() {
               {machine.category.name} • {machine.owner.name}
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div className="machine-detail-header-actions">
             {!showLabel && (
               <Button onClick={() => setShowLabel(true)} variant="secondary">
                 📄 Aufkleber anzeigen
@@ -220,6 +218,50 @@ export default function MachineDetailPage() {
             </Button>
           </div>
         </div>
+        <style jsx>{`
+          .machine-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+          }
+          .machine-detail-header-main {
+            flex: 1 1 200px;
+            min-width: 0;
+          }
+          .machine-inventory-no {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            word-break: break-all;
+          }
+          .machine-detail-header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+          }
+          @media (max-width: 600px) {
+            .machine-detail-header {
+              flex-direction: column;
+              align-items: stretch;
+              gap: 8px;
+            }
+            .machine-detail-header-actions {
+              flex-direction: column;
+              gap: 8px;
+            }
+            .machine-inventory-no {
+              font-size: 22px;
+              margin-bottom: 4px;
+            }
+            .machine-detail-header-actions :global(button) {
+              font-size: 15px !important;
+              padding: 10px 8px !important;
+              min-width: 0 !important;
+            }
+          }
+        `}</style>
       </div>
 
       {/* QR Code Label (collapsible) */}
