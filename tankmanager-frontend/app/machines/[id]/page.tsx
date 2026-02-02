@@ -79,7 +79,8 @@ export default function MachineDetailPage() {
       return;
     }
     loadMachine();
-  }, [machineId, user, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [machineId]);
 
   async function loadMachine() {
     setLoading(true);
