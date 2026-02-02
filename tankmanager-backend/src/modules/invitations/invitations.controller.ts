@@ -32,7 +32,7 @@ export class InvitationsController {
       roles: UserRole[];
     },
   ) {
-    return this.invitationsService.create(user.companyId, user.userId, dto);
+    return this.invitationsService.create(user.companyId, user.id, dto);
   }
 
   // Alle Einladungen der Company auflisten

@@ -44,7 +44,7 @@ export class FilesController {
       user.companyId,
       dto.title,
       dto.module,
-      user.userId,
+      user.id,
     );
   }
 
