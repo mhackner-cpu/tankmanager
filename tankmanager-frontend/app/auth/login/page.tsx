@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
@@ -13,6 +13,9 @@ import colors from '@/lib/colors';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -42,8 +45,8 @@ export default function LoginPage() {
       // Save auth data
       saveAuth(data);
 
-      // Redirect to dashboard
-      router.push('/');
+      // Redirect to original page or dashboard
+      router.push(redirectUrl || '/');
     } catch (err: any) {
       setError(err.message || 'Ein Fehler ist aufgetreten');
     } finally {

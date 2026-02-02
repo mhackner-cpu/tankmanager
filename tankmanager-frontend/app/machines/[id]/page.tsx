@@ -71,8 +71,15 @@ export default function MachineDetailPage() {
   const user = getUser();
 
   useEffect(() => {
+    // Prüfe, ob Benutzer eingeloggt ist
+    if (!user) {
+      // Speichere aktuelle URL für Rücksprung nach Login
+      const currentPath = `/machines/${machineId}`;
+      router.push(`/auth/login?redirect=${encodeURIComponent(currentPath)}`);
+      return;
+    }
     loadMachine();
-  }, [machineId]);
+  }, [machineId, user, router]);
 
   async function loadMachine() {
     setLoading(true);
@@ -84,7 +91,13 @@ export default function MachineDetailPage() {
       console.log('[MachineDetail] Serial Number:', data.serialNumber);
       setMachine(data);
     } catch (e: any) {
-      setError(e?.message || 'Fehler beim Laden');
+      // Bei 401 Fehler zur Login-Seite umleiten
+      if (e?.message?.includes('401') || e?.message?.toLowerCase().includes('unauthorized')) {
+        const currentPath = `/machines/${machineId}`;
+        router.push(`/auth/login?redirect=${encodeURIComponent(currentPath)}`);
+      } else {
+        setError(e?.message || 'Fehler beim Laden');
+      }
     } finally {
       setLoading(false);
     }
