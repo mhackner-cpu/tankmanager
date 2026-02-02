@@ -27,7 +27,20 @@ export default function LoginPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      setRedirectUrl(params.get('redirect'));
+      const redirect = params.get('redirect');
+      if (redirect) {
+        // Speichere redirect in sessionStorage für Debugging
+        sessionStorage.setItem('login_redirect', redirect);
+        console.log('[Login] Redirect URL from query:', redirect);
+        
+        // Wenn wir einen redirect haben und nicht eingeloggt sind, lösche alte Auth-Daten
+        const authData = localStorage.getItem('tankmanager_auth');
+        if (authData) {
+          console.log('[Login] Clearing old auth data');
+          localStorage.removeItem('tankmanager_auth');
+        }
+      }
+      setRedirectUrl(redirect);
     }
   }, []);
 
@@ -44,9 +57,11 @@ export default function LoginPage() {
       };
       
       console.log('[Login] Attempting login to:', `${API_BASE_URL}/auth/login`);
+      console.log('[Login] Email:', loginPayload.email);
       console.log('[Login] Email length:', loginPayload.email.length);
       console.log('[Login] Password length:', loginPayload.password.length);
       console.log('[Login] Redirect URL:', redirectUrl);
+      console.log('[Login] Window location:', window.location.href);
       
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
