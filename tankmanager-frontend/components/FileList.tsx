@@ -187,9 +187,8 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
 
             {/* Actions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0, minWidth: 110 }}>
-              <a
-                href={file.url || `${API_BASE_URL}/files/${file.id}/download`}
-                download={file.fileName}
+              <button
+                onClick={() => handleDownload(file.id, file.fileName)}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#10b981',
@@ -200,14 +199,13 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
                   fontSize: '14px',
                   fontWeight: '500',
                   textAlign: 'center',
-                  textDecoration: 'none',
                   display: 'block',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#059669')}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#10b981')}
               >
                 ⬇️ Download
-              </a>
+              </button>
               <button
                 onClick={() => handleDelete(file.id)}
                 disabled={deleting === file.id}
