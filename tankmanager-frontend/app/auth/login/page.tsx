@@ -30,6 +30,7 @@ function LoginForm() {
     setLoading(true);
 
     try {
+      console.log('[Login] Attempting login to:', `${API_BASE_URL}/auth/login`);
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,9 +38,13 @@ function LoginForm() {
       });
 
       const data = await response.json();
+      console.log('[Login] Response status:', response.status);
+      console.log('[Login] Response data:', data);
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login fehlgeschlagen');
+        // Zeige detaillierte Fehlermeldung
+        const errorMsg = data.message || `Login fehlgeschlagen (Status: ${response.status})`;
+        throw new Error(errorMsg);
       }
 
       // Save auth data
@@ -48,7 +53,10 @@ function LoginForm() {
       // Redirect to original page or dashboard
       router.push(redirectUrl || '/');
     } catch (err: any) {
-      setError(err.message || 'Ein Fehler ist aufgetreten');
+      // Detaillierte Fehlermeldung mit technischen Details für Debugging
+      const errorDetails = err.message || 'Ein Fehler ist aufgetreten';
+      console.error('[Login] Error:', err);
+      setError(`${errorDetails}\n\nAPI: ${API_BASE_URL}\nEmail: ${formData.email}`);
     } finally {
       setLoading(false);
     }
