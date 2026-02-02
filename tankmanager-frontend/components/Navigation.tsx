@@ -12,12 +12,13 @@ export default function Navigation() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null); // null = loading
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setLoggedIn(isAuthenticated());
-    if (isAuthenticated()) {
+    const authenticated = isAuthenticated();
+    setLoggedIn(authenticated);
+    if (authenticated) {
       setUser(getUser());
     } else {
       setUser(null);
@@ -69,7 +70,10 @@ export default function Navigation() {
           ))}
         </div>
         <div className="desktop-user" style={{ position: "relative", marginLeft: 16 }}>
-          {loggedIn && user ? (
+          {loggedIn === null ? (
+            // Loading state - zeige nichts oder einen Platzhalter
+            <div style={{ width: 100, height: 48 }}></div>
+          ) : loggedIn && user ? (
             <>
               <Button onClick={() => setShowDropdown((v) => !v)} style={{ minWidth: 48, minHeight: 48, borderRadius: 24, fontWeight: 600, fontSize: 16 }}>
                 👤 {user.firstName}
