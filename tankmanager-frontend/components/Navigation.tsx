@@ -15,14 +15,44 @@ export default function Navigation() {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null); // null = loading
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
+  // Prüfe Auth-Status beim Mount und bei Storage-Änderungen
   useEffect(() => {
-    const authenticated = isAuthenticated();
-    setLoggedIn(authenticated);
-    if (authenticated) {
-      setUser(getUser());
-    } else {
-      setUser(null);
-    }
+    const checkAuth = () => {
+      const authenticated = isAuthenticated();
+      setLoggedIn(authenticated);
+      if (authenticated) {
+        setUser(getUser());
+      } else {
+        setUser(null);
+      }
+    };
+
+    // Initial check
+    checkAuth();
+
+    // Listen for storage changes (z.B. nach Login in anderem Tab oder nach saveAuth)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'tankmanager_token' || e.key === 'tankmanager_user') {
+        checkAuth();
+      }
+    };
+
+    // Listen for custom event after login
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('authChange', handleAuthChange);
+
+    // Periodische Prüfung alle 500ms (für gleichen Tab)
+    const interval = setInterval(checkAuth, 500);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authChange', handleAuthChange);
+      clearInterval(interval);
+    };
   }, []);
 
   function handleLogout() {
