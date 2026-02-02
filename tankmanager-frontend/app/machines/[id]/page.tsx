@@ -68,19 +68,25 @@ export default function MachineDetailPage() {
   const [labelSize, setLabelSize] = useState<'small' | 'medium' | 'large'>('small');
   const [fileRefreshTrigger, setFileRefreshTrigger] = useState(0);
 
-  const user = getUser();
-
   useEffect(() => {
-    // Prüfe, ob Benutzer eingeloggt ist
-    if (!user) {
-      // Speichere aktuelle URL für Rücksprung nach Login
+    // Prüfe Authentifizierung innerhalb von useEffect
+    const token = typeof window !== 'undefined' ? localStorage.getItem('tankmanager_token') : null;
+    
+    if (!token) {
+      // Nicht eingeloggt - zur Login-Seite umleiten
+      console.log('[MachineDetail] Not authenticated, redirecting to login');
       const currentPath = `/machines/${machineId}`;
       router.push(`/auth/login?redirect=${encodeURIComponent(currentPath)}`);
       return;
     }
+    
+    // Eingeloggt - Maschine laden
+    console.log('[MachineDetail] Authenticated, loading machine');
     loadMachine();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [machineId]);
+
+  const user = getUser();
 
   async function loadMachine() {
     setLoading(true);
