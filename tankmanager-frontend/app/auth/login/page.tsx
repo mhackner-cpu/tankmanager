@@ -37,11 +37,21 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // Debug: Zeige was gesendet wird
+      const loginPayload = {
+        email: formData.email.trim(),
+        password: formData.password,
+      };
+      
       console.log('[Login] Attempting login to:', `${API_BASE_URL}/auth/login`);
+      console.log('[Login] Email length:', loginPayload.email.length);
+      console.log('[Login] Password length:', loginPayload.password.length);
+      console.log('[Login] Redirect URL:', redirectUrl);
+      
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(loginPayload),
       });
 
       const data = await response.json();
@@ -51,7 +61,7 @@ export default function LoginPage() {
       if (!response.ok) {
         // Zeige detaillierte Fehlermeldung
         const errorMsg = data.message || `Login fehlgeschlagen (Status: ${response.status})`;
-        throw new Error(errorMsg);
+        throw new Error(errorMsg + `\n\nEmail: "${loginPayload.email}" (${loginPayload.email.length} Zeichen)\nPasswort: ${loginPayload.password.length} Zeichen`);
       }
 
       // Save auth data
@@ -63,7 +73,7 @@ export default function LoginPage() {
       // Detaillierte Fehlermeldung mit technischen Details für Debugging
       const errorDetails = err.message || 'Ein Fehler ist aufgetreten';
       console.error('[Login] Error:', err);
-      setError(`${errorDetails}\n\nAPI: ${API_BASE_URL}\nEmail: ${formData.email}`);
+      setError(errorDetails);
     } finally {
       setLoading(false);
     }
