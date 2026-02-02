@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../core/prisma/prisma.service';
+import { FilesService } from '../files/files.service';
 import {
   CreateMachineDto,
   UpdateMachineDto,
@@ -13,7 +14,10 @@ type UpdateMachineInput = UpdateMachineDto;
 
 @Injectable()
 export class MachinesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly filesService: FilesService,
+  ) {}
 
   async findBySerialNumber(companyId: string, serialNumber: string) {
     if (!serialNumber?.trim()) {
@@ -417,6 +421,10 @@ export class MachinesService {
 
   async delete(companyId: string, id: string) {
     await this.findOne(companyId, id);
+    
+    // Lösche alle zugehörigen Dateien auf R2/Cloud Storage
+    await this.filesService.deleteFilesByMachine(id, companyId);
+    
     return this.prisma.machine.delete({ where: { id } });
   }
 

@@ -6,6 +6,247 @@ datasource db {
   provider = "postgresql"
 }
 
+model Company {
+  id            String       @id @default(uuid())
+  name          String       @unique
+  domain        String?      @unique
+  email         String?
+  phone         String?
+  address       String?
+  active        Boolean      @default(true)
+  licenseExpiry DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  categories    Category[]
+  invitations   Invitation[]
+  machines      Machine[]
+  owners        Owner[]
+  users         User[]
+
+  @@index([name])
+  @@index([active])
+}
+
+model User {
+  id              String               @id @default(uuid())
+  companyId       String
+  email           String               @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  active          Boolean              @default(true)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  lastLoginAt     DateTime?
+  createdMachines Machine[]            @relation("MachineCreator")
+  passwordResets  PasswordReset[]
+  company         Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  roles           UserRoleAssignment[]
+
+  @@index([companyId])
+  @@index([email])
+}
+
+model UserRoleAssignment {
+  id         String   @id @default(uuid())
+  userId     String
+  role       UserRole
+  assignedAt DateTime @default(now())
+  assignedBy String?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@index([userId])
+}
+
+model Invitation {
+  id        String    @id @default(uuid())
+  companyId String
+  email     String
+  firstName String?
+  lastName  String?
+  token     String    @unique @default(uuid())
+  roles     String
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  expiresAt DateTime
+  invitedBy String
+  createdAt DateTime  @default(now())
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([token])
+  @@index([email])
+  @@index([used])
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique @default(uuid())
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([used])
+}
+
+model Owner {
+  id        String    @id @default(uuid())
+  name      String
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  companyId String
+  machines  Machine[]
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, name])
+  @@index([companyId])
+}
+
+model Category {
+  id                  String          @id @default(uuid())
+  name                String
+  notes               String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  hasEngine           Boolean         @default(true)
+  inventoryMiddleHint String?
+  inventoryPrefix     String?
+  companyId           String?
+  company             Company?        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  fields              CategoryField[]
+  machines            Machine[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@index([name])
+}
+
+model CategoryField {
+  id            String              @id @default(uuid())
+  categoryId    String
+  key           String
+  label         String
+  type          CategoryFieldType
+  required      Boolean             @default(false)
+  optionsJson   String?
+  sortOrder     Int                 @default(0)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  category      Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  machineValues MachineFieldValue[]
+
+  @@unique([categoryId, key])
+  @@index([categoryId, sortOrder])
+}
+
+model Machine {
+  id                String              @id @default(uuid())
+  inventoryNo       String
+  counterType       CounterType
+  counterStartValue Decimal             @db.Decimal(12, 2)
+  status            MachineStatus       @default(ACTIVE)
+  notes             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  buildYear         Int?
+  categoryId        String
+  counterCurrent    Decimal?            @db.Decimal(12, 2)
+  designation       String
+  manufacturer      String?
+  modelType         String?
+  ownerId           String
+  primaryFuelType   FuelType?
+  adBlueRequired    Boolean             @default(false)
+  inventoryMiddle   String?
+  serialNumber      String?
+  createdBy         String?
+  licensePlate      String?
+  stvzoApproved     Boolean             @default(false)
+  companyId         String
+  files             File[]
+  fuelEntries       FuelEntry[]
+  category          Category            @relation(fields: [categoryId], references: [id])
+  company           Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator           User?               @relation("MachineCreator", fields: [createdBy], references: [id])
+  owner             Owner               @relation(fields: [ownerId], references: [id])
+  dynamicValues     MachineFieldValue[]
+  maintenancePlans  MaintenancePlan[]
+
+  @@unique([companyId, inventoryNo])
+  @@index([companyId])
+  @@index([ownerId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([inventoryNo])
+}
+
+model MachineFieldValue {
+  id        String        @id @default(uuid())
+  machineId String
+  fieldId   String
+  value     String?
+  updatedAt DateTime      @updatedAt
+  field     CategoryField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  machine   Machine       @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@unique([machineId, fieldId])
+  @@index([machineId])
+  @@index([fieldId])
+}
+
+model File {
+  id         String     @id @default(uuid())
+  machineId  String
+  module     FileModule @default(MACHINE)
+  title      String?
+  fileName   String
+  mimeType   String?
+  sizeBytes  Int?
+  storageKey String
+  uploadedBy String?
+  uploadedAt DateTime   @default(now())
+  machine    Machine    @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@index([machineId, module])
+}
+
+model MaintenancePlan {
+  id            String       @id @default(uuid())
+  machineId     String
+  title         String
+  intervalType  IntervalType
+  intervalValue Int
+  preAlertValue Int?
+  description   String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  machine       Machine      @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@index([machineId])
+}
+
+model FuelEntry {
+  id           String   @id @default(uuid())
+  machineId    String
+  dateTime     DateTime
+  userName     String
+  fuelType     FuelType
+  liters       Decimal  @db.Decimal(12, 2)
+  counterValue Decimal? @db.Decimal(12, 2)
+  note         String?
+  createdAt    DateTime @default(now())
+  machine      Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@index([machineId, dateTime])
+  @@index([fuelType])
+}
+
 enum MachineStatus {
   ACTIVE
   INACTIVE
@@ -46,328 +287,8 @@ enum FileModule {
 
 enum UserRole {
   ADMIN
-  DRIVER        // Fahrer: Tanken, Wartungen einsehen
-  MECHANIC      // Mechaniker: Wartungen durchführen
-  MANAGEMENT    // Verwaltung: Daten auswerten, Berichte
-  VIEWER        // Nur Lesezugriff
-}
-
-model Company {
-  id            String   @id @default(uuid())
-  name          String   @unique
-  domain        String?  @unique  // z.B. moosmuehle.com (optional)
-  
-  // Kontaktdaten
-  email         String?
-  phone         String?
-  address       String?
-  
-  // Status
-  active        Boolean  @default(true)
-  licenseExpiry DateTime? // Für spätere Lizenzierung
-  
-  // Beziehungen
-  users         User[]
-  invitations   Invitation[]
-  owners        Owner[]
-  categories    Category[]
-  machines      Machine[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  @@index([name])
-  @@index([active])
-}
-
-model User {
-  id           String   @id @default(uuid())
-  companyId    String
-  company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  
-  email        String   @unique
-  passwordHash String
-  
-  firstName    String
-  lastName     String
-  
-  active       Boolean  @default(true)
-  
-  // Many-to-Many Rollen
-  roles        UserRoleAssignment[]
-  
-  // Password Reset Tokens
-  passwordResets PasswordReset[]
-  
-  // Optional: Direkter Zugriff auf häufig benötigte Daten
-  createdMachines Machine[] @relation("MachineCreator")
-  
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  lastLoginAt  DateTime?
-  
-  @@index([companyId])
-  @@index([email])
-}
-
-model UserRoleAssignment {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  role      UserRole
-  
-  assignedAt DateTime @default(now())
-  assignedBy String?  // User-ID des Admin der die Rolle zugewiesen hat
-  
-  @@unique([userId, role])
-  @@index([userId])
-}
-
-model Invitation {
-  id          String   @id @default(uuid())
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  
-  email       String
-  firstName   String?
-  lastName    String?
-  
-  // Einladungs-Token (wird in URL verwendet)
-  token       String   @unique @default(uuid())
-  
-  // Rollen die der User nach Registrierung bekommt
-  roles       String   // JSON Array von UserRole enum values, z.B. ["DRIVER", "MECHANIC"]
-  
-  // Status
-  used        Boolean  @default(false)
-  usedAt      DateTime?
-  expiresAt   DateTime // Token-Ablaufdatum (z.B. 7 Tage)
-  
-  // Wer hat eingeladen
-  invitedBy   String   // User-ID des Admin
-  
-  createdAt   DateTime @default(now())
-  
-  @@index([companyId])
-  @@index([token])
-  @@index([email])
-  @@index([used])
-}
-
-model PasswordReset {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  token     String   @unique @default(uuid())
-  expiresAt DateTime // Token-Ablaufdatum (z.B. 1 Stunde)
-  used      Boolean  @default(false)
-  
-  createdAt DateTime @default(now())
-  
-  @@index([token])
-  @@index([userId])
-  @@index([used])
-}
-
-model Owner {
-  id        String   @id @default(uuid())
-  companyId String
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  
-  name      String
-  notes     String?
-  machines  Machine[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@unique([companyId, name])  // Name unique pro Company
-  @@index([companyId])
-}
-
-model Category {
-  id        String   @id @default(uuid())
-  companyId String?  // NULL = Globale Kategorien (z.B. LKW, Container), gesetzt = Firmen-spezifisch
-  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  name      String
-  notes     String?
-  
-  // Standard: Maschine (mit Motor) oder Gerät (ohne Motor)
-  hasEngine Boolean  @default(true)
-
-  // Inventarnummer-System
-  inventoryPrefix      String?  // z.B. "AR" für Abrollcontainer
-  inventoryMiddleHint  String?  // z.B. "m³ angeben"
-
-  fields    CategoryField[]
-  machines  Machine[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([companyId, name])  // Name unique pro Company (oder global wenn NULL)
-  @@index([companyId])
-  @@index([name])
-}
-
-model CategoryField {
-  id          String            @id @default(uuid())
-  categoryId  String
-  category    Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  key         String            // technisch: z.B. "max_payload"
-  label       String            // Anzeige: "Zul. Nutzlast"
-  type        CategoryFieldType
-  required    Boolean           @default(false)
-
-  // für SELECT: Optionen als JSON-String (später kann man normalisieren)
-  optionsJson String?
-
-  // Anzeige-Reihenfolge in der Maske
-  sortOrder   Int               @default(0)
-
-  machineValues MachineFieldValue[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([categoryId, key])
-  @@index([categoryId, sortOrder])
-}
-
-model Machine {
-  id                String        @id @default(uuid())
-  companyId         String
-  company           Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  ownerId           String
-  owner             Owner         @relation(fields: [ownerId], references: [id], onDelete: Restrict)
-
-  categoryId        String
-  category          Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-
-  // Inventarnummer-System
-  inventoryNo       String                            // Komplette Nummer: PREFIX-MIDDLE-XXX oder manuell
-  inventoryMiddle   String?                           // Freier Mittelteil (z.B. "38" für 38m³)
-
-  // Stammdaten (Pflichtfelder)
-  designation       String        // interne umgangssprachliche Bezeichnung (Pflichtfeld)
-  manufacturer      String?
-  modelType         String?       // Typ/Modell
-  serialNumber      String?       // Serien/Fahrgestellnummer
-  buildYear         Int?
-
-  // Zähler
-  counterType       CounterType
-  counterStartValue Decimal       @db.Decimal(12, 2)
-  counterCurrent    Decimal?      @db.Decimal(12, 2)
-
-  // Kraftstoff (für Verbrenner relevant, für Container egal)
-  primaryFuelType   FuelType?
-  adBlueRequired    Boolean       @default(false)
-
-  // StVZO-Zulassung und Kennzeichen
-  stvzoApproved     Boolean       @default(false)
-  licensePlate      String?       // Kennzeichen (nur relevant wenn stvzoApproved = true)
-
-  status            MachineStatus @default(ACTIVE)
-  notes             String?
-
-  // Metadaten
-  createdBy         String?       // User-ID
-  creator           User?         @relation("MachineCreator", fields: [createdBy], references: [id], onDelete: SetNull)
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-
-  // Beziehungen
-  dynamicValues     MachineFieldValue[]
-  files             File[]
-  maintenancePlans  MaintenancePlan[]
-  fuelEntries       FuelEntry[]
-
-  @@unique([companyId, inventoryNo])  // Inventarnummer unique pro Company
-  @@index([companyId])
-  @@index([ownerId])
-  @@index([categoryId])
-  @@index([status])
-  @@index([inventoryNo])
-}
-
-model MachineFieldValue {
-  id        String   @id @default(uuid())
-  machineId String
-  machine   Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
-
-  fieldId   String
-  field     CategoryField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-
-  // Wert als String gespeichert (UI/Service wandelt je FieldType)
-  value     String?
-
-  updatedAt DateTime @updatedAt
-
-  @@unique([machineId, fieldId])
-  @@index([machineId])
-  @@index([fieldId])
-}
-
-model File {
-  id          String    @id @default(uuid())
-  machineId   String
-  machine     Machine   @relation(fields: [machineId], references: [id], onDelete: Cascade)
-
-  module      FileModule @default(MACHINE)
-
-  title       String?
-  fileName    String
-  mimeType    String?
-  sizeBytes   Int?
-
-  // Speicherpfad / Key (lokal oder S3/MinIO später)
-  storageKey  String
-
-  uploadedBy  String?
-  uploadedAt  DateTime @default(now())
-
-  @@index([machineId, module])
-}
-
-model MaintenancePlan {
-  id            String     @id @default(uuid())
-  machineId     String
-  machine       Machine    @relation(fields: [machineId], references: [id], onDelete: Cascade)
-
-  title         String     // z.B. Motorölwechsel
-  intervalType  IntervalType
-  intervalValue Int        // z.B. 500 (Bh) oder 365 (Tage)
-  preAlertValue Int?       // z.B. 50 (Bh vorher gelb)
-
-  description   String?    // frei: Ölsorte, Menge, Teileliste, etc.
-
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  @@index([machineId])
-}
-
-model FuelEntry {
-  id           String    @id @default(uuid())
-  machineId    String
-  machine      Machine   @relation(fields: [machineId], references: [id], onDelete: Cascade)
-
-  dateTime     DateTime
-  userName     String
-
-  fuelType     FuelType
-  liters       Decimal   @db.Decimal(12, 2)
-  counterValue Decimal?  @db.Decimal(12, 2)
-
-  note         String?
-
-  createdAt    DateTime  @default(now())
-
-  @@index([machineId, dateTime])
-  @@index([fuelType])
+  DRIVER
+  MECHANIC
+  MANAGEMENT
+  VIEWER
 }

@@ -50,6 +50,13 @@ export class FilesService {
     module: string = 'MACHINE',
     uploadedBy?: string,
   ): Promise<FileResponseDto> {
+
+    // Logging Storage-Konfiguration
+    console.log('Storage Provider:', storageConfig.provider);
+    console.log('R2 Bucket:', storageConfig.r2?.bucketName);
+    console.log('R2 Account ID:', storageConfig.r2?.accountId);
+    console.log('R2 Endpoint:', storageConfig.r2?.publicUrl || `https://${storageConfig.r2?.accountId}.r2.cloudflarestorage.com`);
+
     // Validate file type
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       throw new BadRequestException(
