@@ -1,4 +1,22 @@
+
 'use client';
+import React, { useState, useEffect } from 'react';
+import { apiRequest, API_BASE_URL } from '@/lib/api';
+
+type FileItem = {
+  id: string;
+  fileName: string;
+  title?: string;
+  mimeType: string;
+  sizeBytes: number;
+  uploadedAt: string;
+  url?: string;
+};
+
+type FileListProps = {
+  machineId: string;
+  refreshTrigger?: number;
+};
 
 export function FileList({ machineId, refreshTrigger }: FileListProps) {
   const [files, setFiles] = useState<FileItem[]>([]);
