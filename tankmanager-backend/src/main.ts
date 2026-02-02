@@ -13,6 +13,11 @@ async function bootstrap() {
     allowedOrigins.push('http://localhost:3000');
   }
   
+  // Always allow the production Vercel domain
+  if (!allowedOrigins.includes('https://tankmanager-ebon.vercel.app')) {
+    allowedOrigins.push('https://tankmanager-ebon.vercel.app');
+  }
+  
   app.enableCors({
     origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -23,5 +28,6 @@ async function bootstrap() {
   const port = parseInt(process.env.PORT || '3005', 10);
   await app.listen(port);
   console.log(`🚀 Backend running on http://localhost:${port}`);
+  console.log(`🔒 CORS enabled for: ${allowedOrigins.join(', ')}`);
 }
 bootstrap();
