@@ -153,91 +153,78 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
     <div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {files.map((file) => (
-          <div
-            key={file.id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              padding: '15px',
-              backgroundColor: '#ffffff',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
-              transition: 'box-shadow 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            {/* Icon */}
-            <div style={{ fontSize: '32px', flexShrink: 0 }}>
-              {getFileIcon(file.mimeType)}
-            </div>
-
-            {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {file.title || file.fileName || 'Unbenannte Datei'}
+            <div
+              key={file.id}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                padding: '15px',
+                backgroundColor: '#fff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                transition: 'box-shadow 0.2s',
+                boxShadow: 'none',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
+            >
+              {/* Dateiname in eigener Zeile */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                <span style={{ fontSize: '32px', flexShrink: 0 }}>{getFileIcon(file.mimeType)}</span>
+                <span style={{ fontWeight: 'bold', fontSize: '16px', wordBreak: 'break-all', flex: 1 }}>
+                  {file.title || file.fileName || 'Unbenannte Datei'}
+                </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                {formatFileSize(file.sizeBytes)} • {formatDate(file.uploadedAt)}
+              {/* Infozeile */}
+              <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '2px', marginBottom: '2px', width: '100%' }}>
+                {formatFileSize(file.sizeBytes)} &nbsp;|&nbsp; {formatDate(file.uploadedAt)}
+              </div>
+              {/* Aktionen nebeneinander */}
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', width: '100%' }}>
+                <button
+                  onClick={() => handleDownload(file.id, file.fileName)}
+                  style={{
+                    flex: 1,
+                    padding: '8px 0',
+                    backgroundColor: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    minWidth: 0,
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#059669')}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#10b981')}
+                >
+                  ⬇️ Download
+                </button>
+                <button
+                  onClick={() => handleDelete(file.id)}
+                  disabled={deleting === file.id}
+                  style={{
+                    flex: 1,
+                    padding: '8px 0',
+                    backgroundColor: deleting === file.id ? '#9ca3af' : '#ef4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: deleting === file.id ? 'not-allowed' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    minWidth: 0,
+                  }}
+                  onMouseEnter={e => { if (deleting !== file.id) e.currentTarget.style.backgroundColor = '#dc2626'; }}
+                  onMouseLeave={e => { if (deleting !== file.id) e.currentTarget.style.backgroundColor = '#ef4444'; }}
+                >
+                  {deleting === file.id ? '...' : '🗑️ Löschen'}
+                </button>
               </div>
             </div>
-
-            {/* Actions */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0, minWidth: 110 }}>
-              <button
-                onClick={() => handleDownload(file.id, file.fileName)}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  display: 'block',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#059669')}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#10b981')}
-              >
-                ⬇️ Download
-              </button>
-              <button
-                onClick={() => handleDelete(file.id)}
-                disabled={deleting === file.id}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: deleting === file.id ? '#9ca3af' : '#ef4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: deleting === file.id ? 'not-allowed' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  display: 'block',
-                }}
-                onMouseEnter={e => { if (deleting !== file.id) e.currentTarget.style.backgroundColor = '#dc2626'; }}
-                onMouseLeave={e => { if (deleting !== file.id) e.currentTarget.style.backgroundColor = '#ef4444'; }}
-              >
-                {deleting === file.id ? '...' : '🗑️ Löschen'}
-              </button>
-            </div>
-          </div>
         ))}
       </div>
     </div>
