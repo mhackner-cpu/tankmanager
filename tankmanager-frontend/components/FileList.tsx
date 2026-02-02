@@ -20,7 +20,7 @@
   refreshTrigger?: number;
 }
 
-export default function FileList({ machineId, refreshTrigger }: FileListProps) {
+export function FileList({ machineId, refreshTrigger }: FileListProps) {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);

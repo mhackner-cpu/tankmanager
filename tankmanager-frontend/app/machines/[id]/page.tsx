@@ -9,7 +9,7 @@ import Button from '@/components/Button';
 import StatusBadge from '@/components/StatusBadge';
 import MachineLabel from '@/components/MachineLabel';
 import FileUpload from '@/components/FileUpload';
-import FileList from '@/components/FileList';
+import { FileList } from '@/components/FileList';
 
 type Machine = {
   id: string;
@@ -578,12 +578,13 @@ export default function MachineDetailPage() {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
+export function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
   return (
     <div style={{ marginBottom: 8 }}>
       <div style={{ fontSize: '14px', color: colors.neutral[500] }}>{label}:</div>
       <div style={{ fontSize: '14px', color: colors.neutral[900], fontWeight: 500, wordBreak: 'break-word', overflowWrap: 'break-word', marginLeft: 16 }}>
         {value || '-'}
       </div>
+    </div>
   );
 }
