@@ -48,27 +48,37 @@ export function FileList({ machineId, refreshTrigger }: FileListProps) {
   }, [machineId, refreshTrigger]);
 
   const handleDownload = async (fileId: string, fileName: string) => {
+    const token = localStorage.getItem('tankmanager_token');
+    const url = `${API_BASE_URL}/files/${fileId}/download`;
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Download] URL:', url);
+      console.log('[Download] Token:', token);
+    }
     try {
-      const response = await fetch(`${API_BASE_URL}/files/${fileId}/download`, {
+      const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('tankmanager_token')}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
+      if (response.status === 401) {
+        alert('Nicht autorisiert oder keine Berechtigung für diese Datei. Bitte erneut einloggen oder Berechtigungen prüfen.');
+        return;
+      }
       if (!response.ok) throw new Error('Download failed');
 
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = downloadUrl;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     } catch (error) {
       console.error('Download error:', error);
-      alert('Download fehlgeschlagen');
+      alert('Download fehlgeschlagen. Prüfe ob du eingeloggt bist und die Datei zu deinem Unternehmen gehört.');
     }
   };
 
