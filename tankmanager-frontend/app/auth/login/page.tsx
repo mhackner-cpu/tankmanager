@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Input from '@/components/Input';
@@ -11,7 +11,7 @@ import { saveAuth } from '@/lib/auth';
 import { API_BASE_URL } from '@/lib/api';
 import colors from '@/lib/colors';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect');
@@ -143,5 +143,21 @@ export default function LoginPage() {
         </div>
       </form>
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <AuthLayout 
+        title="Willkommen zurück" 
+        subtitle="Melden Sie sich bei Ihrem TankManager Account an"
+        icon="🚜"
+      >
+        <p>Lädt...</p>
+      </AuthLayout>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
